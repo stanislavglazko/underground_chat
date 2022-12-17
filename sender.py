@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import logging
+import json
 from asyncio import coroutine
 from distutils.log import INFO
 from environs import Env
@@ -27,9 +28,12 @@ async def write_to_chat(host: str, port: int, token: str, message: str) -> corou
     logger_sender.debug(server_answer.decode())
     token = '284f12ae-793c-11ed-8c47-0242ac110002'
     message_with_token = f'{token}{EMPTY_LINE}'
-    print(message_with_token)
     writer.write(message_with_token.encode())
     await writer.drain()
+    server_answer_about_token = await reader.readline()
+    if json.loads(server_answer_about_token.decode()) is None:
+        logger_sender.error('Неизвестный токен. Проверьте его или зарегистрируйте заново.')
+        return
     new_message = f'{message}{EMPTY_LINE}{EMPTY_LINE}'
     print(new_message)
     writer.write(new_message.encode())
