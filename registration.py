@@ -20,7 +20,7 @@ def get_parser_args():
     return parser.parse_args()
 
 
-async def registrate(host: str, port: int, name: str):
+async def register(host: str, port: int, name: str):
     reader, writer = await asyncio.open_connection(
         host, port)
 
@@ -57,4 +57,4 @@ if __name__ == '__main__':
     DEFAULT_NAME = env.str('NAME')
     logging.basicConfig(level = INFO)
     parser_args = get_parser_args()
-    asyncio.run(registrate(parser_args.host, parser_args.port, parser_args.name))
+    asyncio.run(register(parser_args.host, parser_args.port, parser_args.name))
