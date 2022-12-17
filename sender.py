@@ -6,7 +6,7 @@ from asyncio import StreamReader, StreamWriter, coroutine
 from distutils.log import INFO
 from environs import Env
 
-from tools import EMPTY_LINE
+from tools import EMPTY_LINE, format_text, read_line, send_message
 
 logger_sender = logging.getLogger("sender")
 
@@ -24,13 +24,14 @@ def get_parser_args():
     return parser.parse_args()
 
 async def authorise(reader: StreamReader, writer: StreamWriter, token: str) -> coroutine:
-    server_answer = await reader.readline()
-    logger_sender.debug(server_answer.decode())
+    server_answer = await read_line(reader)
+    logger_sender.debug(server_answer)
+
     message_with_token = f'{token}{EMPTY_LINE}'
-    writer.write(message_with_token.encode())
-    await writer.drain()
-    server_check_token = await reader.readline()
-    if json.loads(server_check_token.decode()) is None:
+    await send_message(writer, logger_sender, message_with_token)
+
+    server_check_token = await read_line(reader)
+    if json.loads(server_check_token) is None:
         logger_sender.error('Неизвестный токен. Проверьте его или зарегистрируйте заново.')
         raise TokenError()
 
@@ -43,9 +44,7 @@ async def submit_message(host: str, port: int, token: str, message: str) -> coro
     except TokenError:
         return
     message = f'{message}{EMPTY_LINE}{EMPTY_LINE}'
-    logger_sender.debug(message)
-    writer.write(message.encode())
-    await writer.drain()
+    await send_message(writer, logger_sender, message)
 
 
 if __name__ == '__main__':
@@ -56,5 +55,5 @@ if __name__ == '__main__':
     DEFAULT_DEVMAN_TOKEN = env.str('DEVMAN_TOKEN')
     parser_args = get_parser_args()
     logging.basicConfig(level = INFO)
-    message = parser_args.message.replace(EMPTY_LINE,'')
+    message = format_text(parser_args.message)
     asyncio.run(submit_message(parser_args.host, parser_args.write_port, parser_args.token, message))

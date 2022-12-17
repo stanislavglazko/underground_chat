@@ -7,6 +7,8 @@ import datetime
 import logging
 from environs import Env
 
+from tools import EMPTY_LINE, format_text, read_line
+
 logger_receiver = logging.getLogger("receiver")
 
 
@@ -25,10 +27,11 @@ async def read_chat(host: str, port: int, history: str) -> coroutine:
     
     while True:
         try:
-            data = await reader.readline()
+            chat_line = await read_line(reader)
+            chat_line = format_text(chat_line)
             current_datetime = datetime.datetime.now()
             current_datetime_in_correct_format = current_datetime.strftime("%d.%m.%y %H:%M")
-            chat_message = f'[{current_datetime_in_correct_format}] {data.decode()}'
+            chat_message = f'[{current_datetime_in_correct_format}] {chat_line}'
             async with aiofiles.open(history, mode="a") as f:
                 await f.write(chat_message)
             logger_receiver.info(chat_message)
