@@ -1,3 +1,4 @@
+import aiofiles
 import argparse
 import asyncio
 import logging
