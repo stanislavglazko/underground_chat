@@ -1,9 +1,13 @@
 import argparse
 import asyncio
+import logging
 from asyncio import coroutine
+from distutils.log import INFO
 from environs import Env
 
 EMPTY_LINE = '\n'
+
+logger_sender = logging.getLogger("sender")
 
 
 def get_parser_args():
@@ -17,8 +21,10 @@ def get_parser_args():
 
 
 async def write_to_chat(host: str, port: int, token: str, message: str) -> coroutine:
-    _, writer = await asyncio.open_connection(
+    reader, writer = await asyncio.open_connection(
         host, port)
+    server_answer = await reader.readline()
+    logger_sender.debug(server_answer.decode())
     token = '284f12ae-793c-11ed-8c47-0242ac110002'
     message_with_token = f'{token}{EMPTY_LINE}'
     print(message_with_token)
@@ -37,4 +43,5 @@ if __name__ == '__main__':
     DEFAULT_WRITE_PORT = env.int('WRITE_PORT')
     DEFAULT_DEVMAN_TOKEN = env.str('DEVMAN_TOKEN')
     parser_args = get_parser_args()
+    logging.basicConfig(level = INFO)
     asyncio.run(write_to_chat(parser_args.host, parser_args.write_port, parser_args.token, parser_args.message))

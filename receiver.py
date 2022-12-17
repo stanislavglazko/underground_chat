@@ -2,8 +2,12 @@ import aiofiles
 import argparse
 import asyncio
 from asyncio import coroutine
+from distutils.log import INFO
 import datetime
+import logging
 from environs import Env
+
+logger_receiver = logging.getLogger("receiver")
 
 
 def get_parser_args():
@@ -27,7 +31,7 @@ async def read_chat(host: str, port: int, history: str) -> coroutine:
             chat_message = f'[{current_datetime_in_correct_format}] {data.decode()}'
             async with aiofiles.open(history, mode="a") as f:
                 await f.write(chat_message)
-            print(chat_message)
+            logger_receiver.info(chat_message)
         except Exception as exc:
             print(str(exc))
             raise
@@ -40,4 +44,5 @@ if __name__ == '__main__':
     DEFAULT_READ_PORT = env.int('READ_PORT')
     DEFAULT_HISTORY_FILE = env.str('HISTORY_FILE')
     parser_args = get_parser_args()
+    logging.basicConfig(level = INFO)
     asyncio.run(read_chat(parser_args.host, parser_args.port, parser_args.history))
