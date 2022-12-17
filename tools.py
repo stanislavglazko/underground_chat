@@ -1,21 +1,23 @@
-from asyncio import StreamReader, StreamWriter, coroutine
 import logging
+from asyncio import StreamReader, StreamWriter, coroutine
 
 EMPTY_LINE = '\n'
 ENV_FILE = '.env'
 
 
 async def send_message(writer: StreamWriter, logger: logging.Logger, message: str) -> coroutine:
-    message = message.encode()
     logger.debug(message)
+    message = message.encode()
     writer.write(message)
     await writer.drain()
 
 
-async def read_line(reader: StreamReader) -> str:
+async def read_line(reader: StreamReader, logger: logging.Logger) -> str:
     line = await reader.readline()
     decoded_line = line.decode()
-    return decoded_line
+    formatted_line = format_text(decoded_line)
+    logger.debug(formatted_line)
+    return formatted_line
 
 
 def format_text(text: str) -> str:

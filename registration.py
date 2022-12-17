@@ -1,13 +1,13 @@
 import aiofiles
 import argparse
 import asyncio
-import logging
 import json
+import logging
 from asyncio import coroutine
 from distutils.log import INFO
 from environs import Env
 
-from tools import EMPTY_LINE, ENV_FILE, format_text, send_message, read_line
+from tools import ENV_FILE, EMPTY_LINE, format_text, read_line, send_message
 
 logger_registration = logging.getLogger("registration")
 
@@ -24,24 +24,19 @@ async def register(host: str, port: int, name: str) -> coroutine:
     reader, writer = await asyncio.open_connection(
         host, port)
 
-    greetings = await read_line(reader)
-    logger_registration.debug(greetings)
+    await read_line(reader, logger_registration)
 
     empty_message = f'{EMPTY_LINE}'
     await send_message(writer, logger_registration, empty_message)
 
-    name_request = await read_line(reader)
-    logger_registration.debug(name_request)
+    await read_line(reader, logger_registration)
 
     username = f'{name}{EMPTY_LINE}'
     await send_message(writer, logger_registration, username)
 
-    data_with_token = await read_line(reader)
-    decoded_data_with_token = json.loads(data_with_token)
-    logger_registration.debug(decoded_data_with_token)
-    token = decoded_data_with_token["account_hash"]
-    logger_registration.debug(token)
-
+    data_with_token = await read_line(reader, logger_registration)
+    parsed_data_with_token = json.loads(data_with_token)
+    token = parsed_data_with_token["account_hash"]
     async with aiofiles.open(ENV_FILE, mode="a") as f:
         await f.write(f"{EMPTY_LINE}DEVMAN_TOKEN='{token}'")
     return

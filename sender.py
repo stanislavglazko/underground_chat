@@ -23,13 +23,12 @@ def get_parser_args():
     return parser.parse_args()
 
 async def authorise(reader: StreamReader, writer: StreamWriter, token: str) -> coroutine:
-    server_answer = await read_line(reader)
-    logger_sender.debug(server_answer)
+    await read_line(reader, logger_sender)
 
     message_with_token = f'{token}{EMPTY_LINE}'
     await send_message(writer, logger_sender, message_with_token)
 
-    server_check_token = await read_line(reader)
+    server_check_token = await read_line(reader, logger_sender)
     if json.loads(server_check_token) is None:
         logger_sender.error('Неизвестный токен. Проверьте его или зарегистрируйте заново.')
         raise TokenError()
