@@ -7,7 +7,7 @@ import datetime
 import logging
 from environs import Env
 
-from tools import EMPTY_LINE, format_text, read_line
+from tools import format_text, read_line
 
 logger_receiver = logging.getLogger("receiver")
 
