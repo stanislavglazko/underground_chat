@@ -20,7 +20,6 @@ def get_parser_args():
     parser.add_argument('--write_port', type=int, default=DEFAULT_WRITE_PORT)
     parser.add_argument('--token', type=str, default=DEFAULT_DEVMAN_TOKEN)
     parser.add_argument('--message', type=str)
-
     return parser.parse_args()
 
 async def authorise(reader: StreamReader, writer: StreamWriter, token: str) -> coroutine:

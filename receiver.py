@@ -17,7 +17,6 @@ def get_parser_args():
     parser.add_argument('--host', type=str, default=DEFAULT_HOST)
     parser.add_argument('--port', type=int, default=DEFAULT_READ_PORT)
     parser.add_argument('--history', type=str, default=DEFAULT_HISTORY_FILE)
-
     return parser.parse_args()
 
 
