@@ -25,18 +25,18 @@ Python3 should be already installed.
 ### How to use
 1) If you don't have an account in the underground chat and don't have a devman token, you have to register:
     ```
-    python3 registration.py --name=<name> (unnecessary arg, uf you add NAME to the env file)
+    python3 registration.py --name=<name> (name is not a required argument, if you add NAME to the env file)
     ```
     
     After that you will have a DEVMAN_TOKEN in your env file.
 
 2) Write to the chat: 
     ```
-    python3 sender.py --message=<message> (message is a necessary arg)
+    python3 sender.py --message=<message> (message is a required argument)
     ```
 3) Read the chat: 
 
-    You have to do it in a separate tab of your terminal.
+    You have to do it in a separate tab of your terminal:
 
     ```
     python3 receiver.py
