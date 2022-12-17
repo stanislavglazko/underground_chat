@@ -57,4 +57,5 @@ if __name__ == '__main__':
     DEFAULT_NAME = env.str('NAME')
     logging.basicConfig(level = INFO)
     parser_args = get_parser_args()
-    asyncio.run(register(parser_args.host, parser_args.port, parser_args.name))
+    correct_name = parser_args.name.replace('\n', '')
+    asyncio.run(register(parser_args.host, parser_args.port, correct_name))

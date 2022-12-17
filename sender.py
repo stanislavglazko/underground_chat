@@ -57,4 +57,5 @@ if __name__ == '__main__':
     DEFAULT_DEVMAN_TOKEN = env.str('DEVMAN_TOKEN')
     parser_args = get_parser_args()
     logging.basicConfig(level = INFO)
-    asyncio.run(submit_message(parser_args.host, parser_args.write_port, parser_args.token, parser_args.message))
+    message = parser_args.message.replace(EMPTY_LINE,'')
+    asyncio.run(submit_message(parser_args.host, parser_args.write_port, parser_args.token, message))
