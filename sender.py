@@ -1,13 +1,12 @@
-import aiofiles
 import argparse
 import asyncio
 import logging
 import json
-from asyncio import coroutine
+from asyncio import StreamReader, StreamWriter, coroutine
 from distutils.log import INFO
 from environs import Env
 
-EMPTY_LINE = '\n'
+from tools import EMPTY_LINE
 
 logger_sender = logging.getLogger("sender")
 
@@ -16,7 +15,7 @@ class TokenError(Exception):
 
 
 def get_parser_args():
-    parser = argparse.ArgumentParser(description='Connect to underground chat')
+    parser = argparse.ArgumentParser(description='Text to the underground chat')
     parser.add_argument('--host', type=str, default=DEFAULT_HOST)
     parser.add_argument('--write_port', type=int, default=DEFAULT_WRITE_PORT)
     parser.add_argument('--token', type=str, default=DEFAULT_DEVMAN_TOKEN)
@@ -24,14 +23,14 @@ def get_parser_args():
 
     return parser.parse_args()
 
-async def authorise(reader, writer, token: str) -> coroutine:
+async def authorise(reader: StreamReader, writer: StreamWriter, token: str) -> coroutine:
     server_answer = await reader.readline()
     logger_sender.debug(server_answer.decode())
     message_with_token = f'{token}{EMPTY_LINE}'
     writer.write(message_with_token.encode())
     await writer.drain()
-    server_answer_about_token = await reader.readline()
-    if json.loads(server_answer_about_token.decode()) is None:
+    server_check_token = await reader.readline()
+    if json.loads(server_check_token.decode()) is None:
         logger_sender.error('Неизвестный токен. Проверьте его или зарегистрируйте заново.')
         raise TokenError()
 

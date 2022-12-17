@@ -11,7 +11,7 @@ logger_receiver = logging.getLogger("receiver")
 
 
 def get_parser_args():
-    parser = argparse.ArgumentParser(description='Connect to underground chat')
+    parser = argparse.ArgumentParser(description='Read the underground chat')
     parser.add_argument('--host', type=str, default=DEFAULT_HOST)
     parser.add_argument('--port', type=int, default=DEFAULT_READ_PORT)
     parser.add_argument('--history', type=str, default=DEFAULT_HISTORY_FILE)
@@ -33,8 +33,8 @@ async def read_chat(host: str, port: int, history: str) -> coroutine:
                 await f.write(chat_message)
             logger_receiver.info(chat_message)
         except Exception as exc:
-            print(str(exc))
-            raise
+            logger_receiver.error(str(exc))
+            return
 
 
 if __name__ == '__main__':
