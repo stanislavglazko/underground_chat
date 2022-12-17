@@ -1,7 +1,7 @@
 import argparse
 import asyncio
-import logging
 import json
+import logging
 from asyncio import StreamReader, StreamWriter, coroutine
 from distutils.log import INFO
 from environs import Env
