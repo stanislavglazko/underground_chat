@@ -6,7 +6,13 @@ from asyncio import StreamReader, StreamWriter, coroutine
 from distutils.log import INFO
 from environs import Env
 
-from tools import EMPTY_LINE, format_text, open_connection, read_line, send_message
+from tools import (
+    EMPTY_LINE,
+    format_text,
+    open_connection,
+    read_line,
+    send_message,
+)
 
 logger_sender = logging.getLogger("sender")
 
@@ -17,9 +23,9 @@ class TokenError(Exception):
 
 def get_parser_args():
     parser = argparse.ArgumentParser(description='Text to the underground chat')
-    parser.add_argument('--host', type=str, default=DEFAULT_HOST)
-    parser.add_argument('--write_port', type=int, default=DEFAULT_WRITE_PORT)
-    parser.add_argument('--token', type=str, default=DEFAULT_DEVMAN_TOKEN)
+    parser.add_argument('--host', type=str, default=default_host)
+    parser.add_argument('--write_port', type=int, default=default_write_port)
+    parser.add_argument('--token', type=str, default=default_devman_token)
     parser.add_argument('--message', type=str)
     return parser.parse_args()
 
@@ -55,10 +61,17 @@ async def submit_message(
 if __name__ == '__main__':
     env = Env()
     env.read_env()
-    DEFAULT_HOST = env.str('HOST')
-    DEFAULT_WRITE_PORT = env.int('WRITE_PORT')
-    DEFAULT_DEVMAN_TOKEN = env.str('DEVMAN_TOKEN')
+    default_host = env.str('HOST')
+    default_write_port = env.int('WRITE_PORT')
+    default_devman_token = env.str('DEVMAN_TOKEN')
     parser_args = get_parser_args()
     logging.basicConfig(level=INFO)
     message = format_text(parser_args.message)
-    asyncio.run(submit_message(parser_args.host, parser_args.write_port, parser_args.token, message))
+    asyncio.run(
+        submit_message(
+            parser_args.host,
+            parser_args.write_port,
+            parser_args.token,
+            message,
+        )
+    )
