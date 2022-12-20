@@ -22,8 +22,9 @@ def get_parser_args():
 
 async def read_chat(host: str, port: int, history: str) -> coroutine:
     reader, _ = await asyncio.open_connection(
-        host, port)
-    
+        host, port
+    )
+
     while True:
         try:
             chat_line = await read_line(reader, logger_receiver)
@@ -44,5 +45,9 @@ if __name__ == '__main__':
     DEFAULT_READ_PORT = env.int('READ_PORT')
     DEFAULT_HISTORY_FILE = env.str('HISTORY_FILE')
     parser_args = get_parser_args()
-    logging.basicConfig(level = INFO)
-    asyncio.run(read_chat(parser_args.host, parser_args.port, parser_args.history))
+    logging.basicConfig(level=INFO)
+    asyncio.run(
+        read_chat(
+            parser_args.host, parser_args.port, parser_args.history
+        )
+    )
