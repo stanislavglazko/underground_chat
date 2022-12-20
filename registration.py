@@ -39,7 +39,6 @@ async def register(host: str, port: int, name: str) -> coroutine:
     token = parsed_data_with_token["account_hash"]
     async with aiofiles.open(ENV_FILE, mode="a") as f:
         await f.write(f"{EMPTY_LINE}DEVMAN_TOKEN='{token}'")
-    return
 
 
 if __name__ == '__main__':
