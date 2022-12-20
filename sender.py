@@ -61,8 +61,8 @@ async def submit_message(
 if __name__ == '__main__':
     env = Env()
     env.read_env()
-    default_host = env.str('HOST')
-    default_write_port = env.int('WRITE_PORT')
+    default_host = env.str('HOST', 'minechat.dvmn.org')
+    default_write_port = env.int('WRITE_PORT', 5050)
     default_devman_token = env.str('DEVMAN_TOKEN')
     parser_args = get_parser_args()
     logging.basicConfig(level=INFO)

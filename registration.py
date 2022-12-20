@@ -51,9 +51,9 @@ async def register(host: str, port: int, name: str) -> coroutine:
 if __name__ == '__main__':
     env = Env()
     env.read_env()
-    default_host = env.str('HOST')
-    default_port = env.int('WRITE_PORT')
-    default_username = env.str('NAME')
+    default_host = env.str('HOST', 'minechat.dvmn.org')
+    default_port = env.int('WRITE_PORT', 5050)
+    default_username = env.str('NAME', 'Guest')
     logging.basicConfig(level=INFO)
     parser_args = get_parser_args()
     username = format_text(parser_args.name)

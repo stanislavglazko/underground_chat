@@ -43,9 +43,9 @@ async def read_chat(host: str, port: int, history: str) -> coroutine:
 if __name__ == '__main__':
     env = Env()
     env.read_env()
-    default_host = env.str('HOST')
-    default_read_port = env.int('READ_PORT')
-    default_history_file = env.str('HISTORY_FILE')
+    default_host = env.str('HOST', 'minechat.dvmn.org')
+    default_read_port = env.int('READ_PORT', 5000)
+    default_history_file = env.str('HISTORY_FILE', 'history')
     parser_args = get_parser_args()
     logging.basicConfig(level=INFO)
     asyncio.run(
