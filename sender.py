@@ -10,6 +10,7 @@ from tools import EMPTY_LINE, format_text, read_line, send_message
 
 logger_sender = logging.getLogger("sender")
 
+
 class TokenError(Exception):
     pass
 
@@ -21,6 +22,7 @@ def get_parser_args():
     parser.add_argument('--token', type=str, default=DEFAULT_DEVMAN_TOKEN)
     parser.add_argument('--message', type=str)
     return parser.parse_args()
+
 
 async def authorise(reader: StreamReader, writer: StreamWriter, token: str) -> coroutine:
     await read_line(reader, logger_sender)
