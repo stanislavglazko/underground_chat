@@ -6,7 +6,7 @@ from asyncio import StreamReader, StreamWriter, coroutine
 from distutils.log import INFO
 from environs import Env
 
-from tools import EMPTY_LINE, format_text, read_line, send_message
+from tools import EMPTY_LINE, format_text, open_connection, read_line, send_message
 
 logger_sender = logging.getLogger("sender")
 
@@ -36,15 +36,20 @@ async def authorise(reader: StreamReader, writer: StreamWriter, token: str) -> c
         raise TokenError()
 
 
-async def submit_message(host: str, port: int, token: str, message: str) -> coroutine:
-    reader, writer = await asyncio.open_connection(
-        host, port)
-    try:
-        await authorise(reader, writer, token)
-    except TokenError:
-        return
-    message = f'{message}{EMPTY_LINE}{EMPTY_LINE}'
-    await send_message(writer, logger_sender, message)
+async def submit_message(
+    host: str,
+    port: int,
+    token: str,
+    message: str,
+) -> coroutine:
+    async with open_connection(host, port) as connection:
+        reader, writer = connection
+        try:
+            await authorise(reader, writer, token)
+        except TokenError:
+            return
+        message = f'{message}{EMPTY_LINE}{EMPTY_LINE}'
+        await send_message(writer, logger_sender, message)
 
 
 if __name__ == '__main__':
@@ -54,6 +59,6 @@ if __name__ == '__main__':
     DEFAULT_WRITE_PORT = env.int('WRITE_PORT')
     DEFAULT_DEVMAN_TOKEN = env.str('DEVMAN_TOKEN')
     parser_args = get_parser_args()
-    logging.basicConfig(level = INFO)
+    logging.basicConfig(level=INFO)
     message = format_text(parser_args.message)
     asyncio.run(submit_message(parser_args.host, parser_args.write_port, parser_args.token, message))

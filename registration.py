@@ -7,7 +7,14 @@ from asyncio import coroutine
 from distutils.log import INFO
 from environs import Env
 
-from tools import ENV_FILE, EMPTY_LINE, format_text, read_line, send_message
+from tools import (
+    ENV_FILE,
+    EMPTY_LINE,
+    format_text,
+    open_connection,
+    read_line,
+    send_message,
+)
 
 logger_registration = logging.getLogger("registration")
 
@@ -21,24 +28,24 @@ def get_parser_args():
 
 
 async def register(host: str, port: int, name: str) -> coroutine:
-    reader, writer = await asyncio.open_connection(
-        host, port)
+    async with open_connection(host, port) as connection:
+        reader, writer = connection
 
-    await read_line(reader, logger_registration)
+        await read_line(reader, logger_registration)
 
-    empty_message = f'{EMPTY_LINE}'
-    await send_message(writer, logger_registration, empty_message)
+        empty_message = f'{EMPTY_LINE}'
+        await send_message(writer, logger_registration, empty_message)
 
-    await read_line(reader, logger_registration)
+        await read_line(reader, logger_registration)
 
-    username = f'{name}{EMPTY_LINE}'
-    await send_message(writer, logger_registration, username)
+        username = f'{name}{EMPTY_LINE}'
+        await send_message(writer, logger_registration, username)
 
-    data_with_token = await read_line(reader, logger_registration)
-    parsed_data_with_token = json.loads(data_with_token)
-    token = parsed_data_with_token["account_hash"]
-    async with aiofiles.open(ENV_FILE, mode="a") as f:
-        await f.write(f"{EMPTY_LINE}DEVMAN_TOKEN='{token}'")
+        data_with_token = await read_line(reader, logger_registration)
+        parsed_data_with_token = json.loads(data_with_token)
+        token = parsed_data_with_token["account_hash"]
+        async with aiofiles.open(ENV_FILE, mode="a") as f:
+            await f.write(f"{EMPTY_LINE}DEVMAN_TOKEN='{token}'")
 
 
 if __name__ == '__main__':
@@ -47,7 +54,7 @@ if __name__ == '__main__':
     DEFAULT_HOST = env.str('HOST')
     DEFAULT_PORT = env.int('WRITE_PORT')
     DEFAULT_NAME = env.str('NAME')
-    logging.basicConfig(level = INFO)
+    logging.basicConfig(level=INFO)
     parser_args = get_parser_args()
     username = format_text(parser_args.name)
     asyncio.run(register(parser_args.host, parser_args.port, username))

@@ -7,7 +7,7 @@ from asyncio import coroutine
 from distutils.log import INFO
 from environs import Env
 
-from tools import EMPTY_LINE, read_line
+from tools import EMPTY_LINE, open_connection, read_line
 
 logger_receiver = logging.getLogger("receiver")
 
@@ -21,21 +21,23 @@ def get_parser_args():
 
 
 async def read_chat(host: str, port: int, history: str) -> coroutine:
-    reader, _ = await asyncio.open_connection(
-        host, port
-    )
-
-    while True:
-        try:
-            chat_line = await read_line(reader, logger_receiver)
-            current_datetime = datetime.datetime.now()
-            current_datetime_in_correct_format = current_datetime.strftime("%d.%m.%y %H:%M")
-            chat_message = f'[{current_datetime_in_correct_format}] {chat_line}'
-            async with aiofiles.open(history, mode="a") as f:
-                await f.write(f'{chat_message}{EMPTY_LINE}')
-        except Exception as exc:
-            logger_receiver.error(str(exc))
-            return
+    async with aiofiles.open(history, mode="a") as f:
+        async with open_connection(host, port) as connection:
+            reader, _ = connection
+            while True:
+                try:
+                    chat_line = await read_line(reader, logger_receiver)
+                    current_datetime = datetime.datetime.now()
+                    current_datetime_in_correct_format = (
+                        current_datetime.strftime("%d.%m.%y %H:%M")
+                    )
+                    chat_message = (
+                        f'[{current_datetime_in_correct_format}] {chat_line}'
+                    )
+                    await f.write(f'{chat_message}{EMPTY_LINE}')
+                except Exception as exc:
+                    logger_receiver.error(str(exc))
+                    return
 
 
 if __name__ == '__main__':
