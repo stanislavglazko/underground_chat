@@ -35,7 +35,7 @@ async def read_chat(host: str, port: int, history: str) -> coroutine:
                         f'[{current_datetime_in_correct_format}] {chat_line}'
                     )
                     await f.write(f'{chat_message}{EMPTY_LINE}')
-                except Exception as exc:
+                except asyncio.IncompleteReadError as exc:
                     logger_receiver.error(str(exc))
                     return
 
