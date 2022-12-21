@@ -32,6 +32,7 @@ async def open_connection(
         yield reader, writer
     finally:
         writer.close()
+        await writer.wait_closed()
 
 
 def format_text(text: str) -> str:
