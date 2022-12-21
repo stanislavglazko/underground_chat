@@ -23,9 +23,9 @@ class TokenError(Exception):
 
 def get_parser_args():
     parser = argparse.ArgumentParser(description='Text to the underground chat')
-    parser.add_argument('--host', type=str, default=default_host)
-    parser.add_argument('--write_port', type=int, default=default_write_port)
-    parser.add_argument('--token', type=str, default=default_devman_token)
+    parser.add_argument('--host', type=str, default=host)
+    parser.add_argument('--write_port', type=int, default=write_port)
+    parser.add_argument('--token', type=str, default=devman_token)
     parser.add_argument('--message', type=str)
     return parser.parse_args()
 
@@ -61,9 +61,9 @@ async def submit_message(
 if __name__ == '__main__':
     env = Env()
     env.read_env()
-    default_host = env.str('HOST', 'minechat.dvmn.org')
-    default_write_port = env.int('WRITE_PORT', 5050)
-    default_devman_token = env.str('DEVMAN_TOKEN')
+    host = env.str('HOST', 'minechat.dvmn.org')
+    write_port = env.int('WRITE_PORT', 5050)
+    devman_token = env.str('DEVMAN_TOKEN')
     parser_args = get_parser_args()
     logging.basicConfig(level=INFO)
     message = format_text(parser_args.message)

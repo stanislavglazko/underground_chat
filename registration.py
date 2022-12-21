@@ -21,9 +21,9 @@ logger_registration = logging.getLogger("registration")
 
 def get_parser_args():
     parser = argparse.ArgumentParser(description='Register in the underground chat')
-    parser.add_argument('--host', type=str, default=default_host)
-    parser.add_argument('--port', type=int, default=default_port)
-    parser.add_argument('--name', type=str, default=default_username)
+    parser.add_argument('--host', type=str, default=host)
+    parser.add_argument('--port', type=int, default=port)
+    parser.add_argument('--name', type=str, default=username)
     return parser.parse_args()
 
 
@@ -51,9 +51,9 @@ async def register(host: str, port: int, name: str) -> coroutine:
 if __name__ == '__main__':
     env = Env()
     env.read_env()
-    default_host = env.str('HOST', 'minechat.dvmn.org')
-    default_port = env.int('WRITE_PORT', 5050)
-    default_username = env.str('NAME', 'Guest')
+    host = env.str('HOST', 'minechat.dvmn.org')
+    port = env.int('WRITE_PORT', 5050)
+    username = env.str('NAME', 'Guest')
     logging.basicConfig(level=INFO)
     parser_args = get_parser_args()
     username = format_text(parser_args.name)

@@ -14,9 +14,9 @@ logger_receiver = logging.getLogger("receiver")
 
 def get_parser_args():
     parser = argparse.ArgumentParser(description='Read the underground chat')
-    parser.add_argument('--host', type=str, default=default_host)
-    parser.add_argument('--port', type=int, default=default_read_port)
-    parser.add_argument('--history', type=str, default=default_history_file)
+    parser.add_argument('--host', type=str, default=host)
+    parser.add_argument('--port', type=int, default=read_port)
+    parser.add_argument('--history', type=str, default=history_file)
     return parser.parse_args()
 
 
@@ -43,9 +43,9 @@ async def read_chat(host: str, port: int, history: str) -> coroutine:
 if __name__ == '__main__':
     env = Env()
     env.read_env()
-    default_host = env.str('HOST', 'minechat.dvmn.org')
-    default_read_port = env.int('READ_PORT', 5000)
-    default_history_file = env.str('HISTORY_FILE', 'history')
+    host = env.str('HOST', 'minechat.dvmn.org')
+    read_port = env.int('READ_PORT', 5000)
+    history_file = env.str('HISTORY_FILE', 'history')
     parser_args = get_parser_args()
     logging.basicConfig(level=INFO)
     asyncio.run(
